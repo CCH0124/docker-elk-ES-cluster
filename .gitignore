@@ -1,0 +1,12 @@
+## DataSet
+.json
+.csv
+## nginx auth
+nginx/auth/*
+nginx/cert/*
+## ES store
+elasticsearch/dataStore/master-data01/*
+elasticsearch/dataStore/node-data02/*
+elasticsearch/dataStore/node-data03/*
+## logstash
+logstash/DataSet/*

@@ -1,0 +1,5 @@
+- pipeline.id: ddos
+  queue.type: persisted
+  path.config: "/usr/share/logstash/pipeline/ddos_csv.conf"
+  pipeline.workers: 1
+
