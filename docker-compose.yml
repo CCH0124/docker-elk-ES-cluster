@@ -14,12 +14,13 @@ services:
         hard: -1
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - ./elasticsearch/dataStore/master-data01:/usr/share/elasticsearch/data:rw
+      - ./elasticsearch/config/plugins/IK:/usr/share/elasticsearch/plugins/ik:rw
+        #  - ./elasticsearch/dataStore/master-data01:/usr/share/elasticsearch/data:rw
     ports:
       - "9200:9200"
       - "9300:9300"
     environment:
-      ES_JAVA_OPTS: "-Xmx4096m -Xms4096m"
+      ES_JAVA_OPTS: "-Xmx512m -Xms512m"
     networks:
       - elk
  
@@ -35,11 +36,11 @@ services:
         hard: -1
     volumes:
       - ./elasticsearch/config/elasticsearch-node2.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - ./elasticsearch/dataStore/node-data02:/usr/share/elasticsearch/data:rw
+        #- ./elasticsearch/dataStore/node-data02:/usr/share/elasticsearch/data:rw
     ports:
       - "9202:9200"
     environment:
-      ES_JAVA_OPTS: "-Xmx4096m -Xms4096m"
+      ES_JAVA_OPTS: "-Xmx2048m -Xms2048m"
     networks:
       - elk
 
@@ -55,11 +56,11 @@ services:
         hard: -1
     volumes:
       - ./elasticsearch/config/elasticsearch-node3.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - ./elasticsearch/dataStore/node-data03:/usr/share/elasticsearch/data:rw
+        # - ./elasticsearch/dataStore/node-data03:/usr/share/elasticsearch/data:rw
     ports:
       - "9203:9200"
     environment:
-      ES_JAVA_OPTS: "-Xmx2048m -Xms2048m"
+      ES_JAVA_OPTS: "-Xmx4096m -Xms4096m"
     networks:
       - elk
  
@@ -89,7 +90,7 @@ services:
       - "9600:9600"
       - "5555:5555"
     environment:
-      LS_JAVA_OPTS: "-Xmx2048m -Xms2048m"
+      LS_JAVA_OPTS: "-Xmx1024m -Xms1024m"
     networks:
       - elk
     depends_on:
@@ -110,40 +111,22 @@ services:
     depends_on:
       - elasticsearch
 
-  nginx:
-    image: nginx:latest
-    container_name: proxy
+  filebeat:
+    build:
+      context: filebeat/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    container_name: filebeat
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/security_header.conf:/etc/nginx/security_header.conf:ro
-      - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
-      - ./nginx/cert/:/etc/nginx/cert/:ro
-      - ./nginx/auth/:/etc/nginx/auth/:ro
-    ports:
-      - "8999:8999"
-      - "9999:9999"
-      - "443:443"
+      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
+      - ./filebeat/DataSet:/usr/share/filebeat/DataSet:ro
     networks:
       - elk
     depends_on:
       - elasticsearch
       - kibana
-      
-#  cadvisor:
-#    image: google/cadvisor:latest
-#    restart: always
-#    ports:
-#      - "8080:8080"
-#    volumes:
-#      - /:/rootfs:ro
-#      - /var/run:/var/run:rw
-#      - /sys:/sys:ro
-#      - /var/lib/docker/:/var/lib/docker:ro
-#    networks:
-#      - elk
-#    depends_on: 
-#      - elasticsearch
-#    command: -storage_driver="elasticsearch" -alsologtostderr=true -storage_driver_es_host="http://elasticsearch:9200"
 
 networks:
   elk:

@@ -1,0 +1,22 @@
+filebeat.inputs:
+- type: log
+  paths:
+    - "/usr/share/filebeat/DataSet/SAT-01-12-2018_0750.json"
+  document_type: "pcap_file"
+  json.keys_under_root: true
+
+processors:
+ - drop_event:
+     when:
+       equals:
+         index._type: "pcap_file"
+
+
+setup.kibana.host: "kibana:5601"
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  index: "packets"
+setup.template:
+  name: 'packet'
+  pattern: 'packet-*'
+  enabled: false  

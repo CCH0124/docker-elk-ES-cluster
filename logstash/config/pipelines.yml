@@ -1,5 +1,5 @@
-- pipeline.id: ddos
+- pipeline.id: pcap
   queue.type: persisted
-  path.config: "/usr/share/logstash/pipeline/ddos_csv.conf"
+  path.config: "/usr/share/logstash/pipeline/pcap.conf"
   pipeline.workers: 1
 

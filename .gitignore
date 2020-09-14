@@ -8,5 +8,7 @@ nginx/cert/*
 elasticsearch/dataStore/master-data01/*
 elasticsearch/dataStore/node-data02/*
 elasticsearch/dataStore/node-data03/*
+elasticsearch/config/plugin/*
 ## logstash
 logstash/DataSet/*
+filebeat/DataSet/*
